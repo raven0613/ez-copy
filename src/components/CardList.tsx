@@ -38,8 +38,8 @@ const CardList = ({ searchKeyword }: ICardList) => {
     }
 
     return (
-        <div className="flex-1 flex flex-col gap-2 overflow-y-scroll">
-            {allTextCard.length === 0 && <p className="text-[#76ABAE]">Add your first note</p>}
+        <div className="flex flex-col gap-2 overflow-y-scroll overflow-x-hidden flex-1 w-full">
+            {allTextCard.length === 0 && <p className="text-accent-400">Add your first note</p>}
             {shownTextList && shownTextList.map(item => {
                 if (editingId === item.id) return (
                     <EditingCard

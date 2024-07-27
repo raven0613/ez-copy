@@ -36,7 +36,7 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
                         ref={valueRef}
                         autoFocus
                         placeholder="Input your content"
-                        className={`w-full bg-[#4c5361] p-1.5 rounded-sm no-scrollbar`}
+                        className={`w-full bg-secondary-900 p-1.5 rounded-sm no-scrollbar placeholder:brightness-75`}
                         style={{ height: "30px" }}
                         onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
                         onClick={e => e.stopPropagation()}
@@ -49,7 +49,7 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
                         ref={desRef}
                         autoFocus
                         placeholder="Input your description"
-                        className={`w-full bg-[#4c5361] p-1.5 rounded-sm no-scrollbar text-[#d6d5d5]`}
+                        className={`w-full bg-secondary-900 p-1.5 rounded-sm no-scrollbar text-light placeholder:brightness-75`}
                         style={{ height: "30px" }}
                         onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
                         onClick={e => e.stopPropagation()}
@@ -62,12 +62,12 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
                         <div className="flex flex-wrap gap-1.5">
                             {currentTagList && currentTagList.map(item =>
                                 <span key={item}
-                                    className={`px-1.5 py-0.5 rounded-md  border text-sm text-[#31363F] font-semibold
-                                        ${duplicatedTag === item ? "border-red-300 bg-red-100" : "border-[#76ABAE] bg-[#76ABAE]"}
+                                    className={`px-1.5 py-0.5 rounded-md  border text-sm text-secondary-900 font-semibold
+                                        ${duplicatedTag === item ? "border-red-300 bg-red-100" : "border-accent-400 bg-accent-400"}
                                     `}>
 
                                     {item}
-                                    <button className="ml-1 px-1.5 text-center bg-transparent w-4" onClick={() => {
+                                    <button className="ml-1 px-1.5 text-center bg-accent-400 w-4" onClick={() => {
                                         setCurrentTagList(pre => pre.filter(currTag => item !== currTag));
                                     }}>×</button>
                                 </span>
@@ -77,7 +77,7 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
                             placeholder="Input tag and press Enter"
                             onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
                             onClick={e => e.stopPropagation()}
-                            className={`px-1.5 py-1 text-sm bg-[#4c5361] w-full h-8 text-[#d6d5d5]`}
+                            className={`px-1.5 py-1 text-sm bg-secondary-900 w-full h-8 text-light placeholder:brightness-75`}
                             value={inputTagValue}
                             onChange={e => {
                                 setInputTagValue(e.target.value);
@@ -99,7 +99,7 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
                     <button
                         disabled={isOkDisabled}
                         className={`w-7 h-7 p-1 rounded-full  transition hover:duration-200 ease-in-out
-                        ${isOkDisabled ? "bg-[#31363F]" : "bg-[#76ABAE] hover:bg-[#87d3da]"}
+                        ${isOkDisabled ? "bg-secondary-900" : "bg-accent-400 hover:brightness-125"}
                         `}
                         onClick={e => {
                             e.stopPropagation();
@@ -111,16 +111,16 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
                             });
                         }}
                     >
-                        <CheckIcon classProps={`${isOkDisabled ? "stroke-[#505968]" : "stroke-[#222831]"}`} />
+                        <CheckIcon classProps={`${isOkDisabled ? "stroke-primary-600" : "stroke-primary-950"}`} />
                     </button>
                     <button
-                        className={`w-7 h-7 p-1 rounded-full bg-[#76ABAE] hover:bg-[#87d3da] transition hover:duration-200 ease-in-out`}
+                        className={`w-7 h-7 p-1 rounded-full bg-accent-400 hover:brightness-125 transition hover:duration-200 ease-in-out`}
                         onClick={e => {
                             e.stopPropagation();
                             handleDelete(id);
                         }}
                     >
-                        <DeleteIcon classProps={"stroke-[#222831]"} />
+                        <DeleteIcon classProps={"stroke-primary-950"} />
                     </button>
                 </>}
                 colorPickerComp={

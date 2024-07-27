@@ -12,7 +12,7 @@ interface ICardLayout {
 const Card = ({ contentComp, descriptionComp, tagComp, buttonComp, colorPickerComp, color, handleClick, id }: ICardLayout) => {
 
     return (
-        <div className="w-full h-fit rounded-lg border border-[#4c5361] relative pl-6" onClick={() => {
+        <div className="h-fit w-[calc(100%-6px)] rounded-lg border border-secondary-700  relative pl-6" onClick={() => {
             handleClick();
         }}>
 
@@ -26,15 +26,15 @@ const Card = ({ contentComp, descriptionComp, tagComp, buttonComp, colorPickerCo
                 {colorPickerComp}
             </label>
 
-            <div className="flex-1 flex flex-col h-fit gap-2 p-2">
+            <div className="flex flex-col h-fit gap-2 p-2">
 
                 {/* content */}
-                <span className="w-full h-fit text-sm whitespace-pre-wrap text-[#d6d5d5] text-start">
+                <span className="w-full max-h-40 text-sm whitespace-pre-wrap text-light text-start overflow-x-hidden">
                     {contentComp}
                 </span>
 
                 {/* description */}
-                {descriptionComp && <span className="w-full h-fit text-sm text-[#669699] text-start whitespace-pre-wrap">
+                {descriptionComp && <span className="w-full h-fit text-sm text-accent-400 text-start whitespace-pre-wrap">
                     {/* <span className="text-xs align-text-top">// </span> */}
                     {descriptionComp}
                 </span>}
@@ -42,7 +42,7 @@ const Card = ({ contentComp, descriptionComp, tagComp, buttonComp, colorPickerCo
                 {/* bottom */}
                 <section className="w-full flex gap-2">
                     {/* tags */}
-                    <div className="flex flex-1 gap-2 items-center flex-wrap text-[#659396]">
+                    <div className="flex flex-1 gap-2 items-center flex-wrap text-accent-400">
                         {tagComp}
                     </div>
                     {/* buttons */}

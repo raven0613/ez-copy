@@ -29,22 +29,22 @@ const Card = ({ data, handleEdit, handleDelete, handleChangeData }: ICard) => {
                 )}
                 buttonComp={<>
                     <button
-                        className={`w-7 h-7 p-1 rounded-full bg-[#76ABAE] hover:bg-[#87d3da] transition hover:duration-200 ease-in-out`}
+                        className={`w-7 h-7 p-1 rounded-full bg-accent-400 hover:brightness-125 transition hover:duration-200 ease-in-out`}
                         onClick={e => {
                             e.stopPropagation();
                             handleEdit(id);
                         }}
                     >
-                        <EditIcon classProps={"stroke-[#222831]"} />
+                        <EditIcon classProps={"stroke-primary-950"} />
                     </button>
                     <button
-                        className={`w-7 h-7 p-1 rounded-full bg-[#76ABAE] hover:bg-[#87d3da] transition hover:duration-200 ease-in-out`}
+                        className={`w-7 h-7 p-1 rounded-full bg-accent-400 hover:brightness-125 transition hover:duration-200 ease-in-out`}
                         onClick={e => {
                             e.stopPropagation();
                             handleDelete(id);
                         }}
                     >
-                        <DeleteIcon classProps={"stroke-[#222831]"} />
+                        <DeleteIcon classProps={"stroke-primary-950"} />
                     </button>
                 </>}
                 colorPickerComp={

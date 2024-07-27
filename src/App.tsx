@@ -11,9 +11,9 @@ function App() {
 
       </section>
 
-      <section className="w-full h-[32rem] flex">
+      <section className="w-full h-[32rem] grid grid-cols-5">
         <TagList />
-        <div className="h-full flex-1 flex flex-col">
+        <div className="h-full w-full flex flex-col overflow-hidden col-span-4">
           <CardList searchKeyword={""} />
           <textarea className="outline-none border border-neutral-800 resize-none"></textarea>
         </div>

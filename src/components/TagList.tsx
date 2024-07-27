@@ -31,7 +31,7 @@ function TagList() {
     }, [allTag.length, shownTag.length])
 
     return (
-        <div className="w-40 h-full px-1.5">
+        <div className="col-span-1 w-full h-full px-1.5">
             <div className={`w-full flex bg-slate-300`}>
                 <div
                     className={` ${isSelectAll ? "" : ""}`}
