@@ -1,15 +1,55 @@
 import './App.css'
 import TagList from './components/TagList'
 import CardList from './components/CardList';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AddCard from './components/AddCard';
 import SearchInput from './components/SearchInput';
 import BgButton from './components/button/BgButton';
 import logo from "/logo.png";
+import CryptoJS from "crypto-js"
+import { IJsonData } from './type/type';
+import useStore from './zustand';
+import { key } from './consts';
+
+export function saveLocalstorage(strData: string) {
+  const encrypted = CryptoJS.AES.encrypt(strData, key).toString();
+  localStorage.setItem("ez-copy", encrypted);
+}
+
+function isJson(str: string) {
+  if (typeof str !== "string") return;
+  try {
+    const parsedStr = JSON.parse(str);
+    if (typeof parsedStr === "object") return true;
+  }
+  catch (e) {
+    return false;
+  }
+  return false;
+}
 
 function App() {
+  const { setAllTextCard, setAllTag, setShownTag } = useStore((state) => state);
   const [isAddShowing, setIsAddShowing] = useState(false);
   const [keyword, setKeyword] = useState("");
+  const jsonData = useRef<IJsonData>();
+
+  useEffect(() => {
+    if (!localStorage.getItem("ez-copy")) return;
+    const localStorageData = localStorage.getItem("ez-copy") || "";
+    let initialData: IJsonData;
+    if (isJson(localStorageData)) {
+      initialData = JSON.parse(localStorageData);
+    }
+    else {
+      const decrypted = CryptoJS.AES.decrypt(localStorageData, key).toString(CryptoJS.enc.Utf8);
+      initialData = JSON.parse(decrypted);
+    }
+    jsonData.current = initialData;
+    setAllTextCard(initialData.posts || []);
+    setAllTag(initialData.tags || []);
+    setShownTag(initialData.shownTag || []);
+  }, [setAllTextCard, setAllTag, setShownTag]);
 
   useEffect(() => {
     async function handleCopy(e: KeyboardEvent) {
@@ -49,11 +89,11 @@ function App() {
       </section>
 
       <section className="w-full h-[32rem] shrink-0 grid grid-cols-5 pb-2">
-        <TagList />
+        <TagList jsonData={jsonData.current} />
         <div className="h-full w-full flex flex-col overflow-hidden col-span-4">
 
-          <AddCard isAddShowing={isAddShowing} />
-          <CardList searchKeyword={keyword} />
+          <AddCard isAddShowing={isAddShowing} jsonData={jsonData.current} />
+          <CardList searchKeyword={keyword} jsonData={jsonData.current} />
 
         </div>
       </section>

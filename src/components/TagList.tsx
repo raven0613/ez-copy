@@ -1,30 +1,22 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { IJsonData } from "../type/type";
 import Tag from "./Tag";
 import EditingTag from "./EditingTag";
 import useStore from "../zustand";
 import SelectAllIcon from "./svg/SelectAllIcon";
 import CancelAllIcon from "./svg/CancelAllIcon";
+import { saveLocalstorage } from "../App";
 
-// interface ITagList {
-//     searchKeyword: string;
-// }
+interface ITagList {
+    jsonData?: IJsonData;
+}
 
-function TagList() {
+function TagList({ jsonData }: ITagList) {
     const { allTag, setAllTag, shownTag, setShownTag, toggleShownTag: toggleShownTag, deleteShownTag, deleteTag, setAllTextCard, allTextCard } = useStore((state) => state);
 
     const [editingTag, setEditingTag] = useState<string>("");
     const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
     const shownTagSet = new Set(shownTag);
-    const jsonData = useRef<IJsonData>();
-
-    useEffect(() => {
-        if (!localStorage.getItem("ez-copy")) return;
-        const initialData: IJsonData = JSON.parse(localStorage.getItem("ez-copy") || "");
-        jsonData.current = initialData;
-        setAllTag(initialData.tags || []);
-        setShownTag(initialData.shownTag || []);
-    }, [setAllTag, setShownTag]);
 
     useEffect(() => {
         if (allTag.length === 0 && shownTag.length === 0) return;
@@ -41,24 +33,28 @@ function TagList() {
                     ${isSelectAll ? "bg-accent-400" : "bg-accent-400"}
                     `}
                     onClick={() => {
+                        if (!jsonData) return;
                         setShownTag([...allTag]);
                         setIsSelectAll(true);
-                        localStorage.setItem("ez-copy", JSON.stringify({
-                            ...jsonData.current,
+                        const strData = JSON.stringify({
+                            ...jsonData,
                             shownTag: [...allTag]
-                        }));
+                        })
+                        saveLocalstorage(strData);
                     }}
                 ><SelectAllIcon classProps="stroke-primary-800" /></button>
                 <button
                     className={`w-7 h-7 p-1 rounded-full hover:bg-warning transition hover:duration-150 hover:ease-linear bg-accent-600 
                     `}
                     onClick={() => {
+                        if (!jsonData) return;
                         setShownTag([]);
                         setIsSelectAll(false);
-                        localStorage.setItem("ez-copy", JSON.stringify({
-                            ...jsonData.current,
+                        const strData = JSON.stringify({
+                            ...jsonData,
                             shownTag: []
-                        }));
+                        })
+                        saveLocalstorage(strData);
                     }}
                 ><CancelAllIcon classProps="stroke-primary-800" /></button>
             </div>
@@ -70,6 +66,7 @@ function TagList() {
                             key={item}
                             tag={item}
                             handleSave={(newTag: string) => {
+                                if (!jsonData) return;
                                 const newAllTag = allTag.map(tag => {
                                     if (tag === item) return newTag;
                                     return tag;
@@ -86,8 +83,8 @@ function TagList() {
                                     }
                                 })
                                 setAllTextCard(updatedAllTextCard);
-                                localStorage.setItem("ez-copy", JSON.stringify({
-                                    ...jsonData.current,
+                                const strData = JSON.stringify({
+                                    ...jsonData,
                                     posts: updatedAllTextCard,
                                     tags: allTag.map(tag => {
                                         if (tag === item) return newTag;
@@ -97,9 +94,11 @@ function TagList() {
                                         if (tag === item) return newTag;
                                         return tag;
                                     })
-                                }));
+                                })
+                                saveLocalstorage(strData);
                             }}
                             handleDelete={() => {
+                                if (!jsonData) return;
                                 setEditingTag("");
                                 deleteTag(item);
                                 deleteShownTag(item);
@@ -110,12 +109,14 @@ function TagList() {
                                     }
                                 })
                                 setAllTextCard(updatedAllTextCard);
-                                localStorage.setItem("ez-copy", JSON.stringify({
-                                    ...jsonData.current,
+
+                                const strData = JSON.stringify({
+                                    ...jsonData,
                                     posts: updatedAllTextCard,
                                     tags: allTag.filter(tag => tag !== item),
                                     shownTag: shownTag.filter(tag => tag !== item)
-                                }));
+                                })
+                                saveLocalstorage(strData);
                             }}
                         />
                     )
@@ -128,13 +129,16 @@ function TagList() {
                                 setEditingTag(item);
                             }}
                             handleSelect={() => {
+                                if (!jsonData) return;
                                 toggleShownTag(item);
-                                localStorage.setItem("ez-copy", JSON.stringify({
-                                    ...jsonData.current,
+
+                                const strData = JSON.stringify({
+                                    ...jsonData,
                                     shownTag: shownTag.some(tag => item === tag)
                                         ? shownTag.filter(tag => item !== tag)
                                         : [...shownTag, item]
-                                }));
+                                })
+                                saveLocalstorage(strData);
                             }}
                         />
                     )

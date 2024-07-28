@@ -1,19 +1,21 @@
 import ColorPicker from "./ColorPicker";
 import CardLayout from "./CardLayout";
 import CheckIcon from "./svg/CheckIcon";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import useAutosizeTextarea from "../hooks/useAutosizeTextarea";
 import EraseIcon from "./svg/EraseIcon";
 import { v4 as uuidv4 } from 'uuid';
 import useStore from "../zustand";
 import { IJsonData } from "../type/type";
 import BgButton from "./button/BgButton";
+import { saveLocalstorage } from "../App";
 
 interface ICard {
-    isAddShowing: boolean
+    isAddShowing: boolean,
+    jsonData?: IJsonData;
 }
 
-const AddCard = ({ isAddShowing }: ICard) => {
+const AddCard = ({ isAddShowing, jsonData }: ICard) => {
     const { allTextCard, setAllTextCard, allTag, addTag } = useStore((state) => state);
     const [inputValue, setInputValue] = useState<string>("");
     const [descriptionValue, setDescriptionValue] = useState<string>("");
@@ -22,14 +24,6 @@ const AddCard = ({ isAddShowing }: ICard) => {
     const [duplicatedTag, setDuplicatedTag] = useState<string>("");
     const [color, setColor] = useState<string>("");
     const id = "new";
-
-    const jsonData = useRef<IJsonData>();
-
-    useEffect(() => {
-        if (!localStorage.getItem("ez-copy")) return;
-        const initialData: IJsonData = JSON.parse(localStorage.getItem("ez-copy") || "");
-        jsonData.current = initialData;
-    }, []);
 
     const valueRef = useRef<HTMLTextAreaElement>(null);
     const desRef = useRef<HTMLTextAreaElement>(null);
@@ -135,7 +129,8 @@ const AddCard = ({ isAddShowing }: ICard) => {
                             const allTagsSet = new Set(allTag);
                             currentTagList.map(item => allTagsSet.add(item));
 
-                            localStorage.setItem("ez-copy", JSON.stringify({ ...jsonData.current, posts: newAllTextList, tags: [...allTagsSet] }));
+                            const strData = JSON.stringify({ ...jsonData, posts: newAllTextList, tags: [...allTagsSet] })
+                            saveLocalstorage(strData);
 
                             setDescriptionValue("");
                             setInputValue("");

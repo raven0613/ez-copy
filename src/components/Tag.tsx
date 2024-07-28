@@ -11,8 +11,8 @@ const Tag = ({ tag, handleEdit, handleSelect, isSelected }: ITag) => {
     return (
         <div key={tag} className={`w-full text-base text-start px-2 py-1.5  hover:duration-150 cursor-pointer relative group hover:brightness-125
             ${isSelected
-                ? "bg-accent-400 even:bg-accent-500 text-primary-950 hover:even:brightness-110"
-                : "even:bg-secondary-900 bg-primary-950 text-light-300"}
+                ? "bg-accent-400 odd:bg-accent-500 text-primary-950 hover:odd:brightness-110"
+                : "odd:bg-secondary-900 bg-primary-950 text-light-300"}
         `}
             onClick={() => {
                 handleSelect();

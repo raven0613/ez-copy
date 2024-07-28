@@ -15,7 +15,7 @@ export default function ColorPicker({ labelFor, unitId, handleGetColor, color }:
                 onChange={(e) => {
                     handleGetColor(e.target.value);
                 }}
-                value={color === "" ? "#ffffff" : color}
+                value={color ? color : "#ffffff"}
             ></input>
         </div>
     )
