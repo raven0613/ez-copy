@@ -8,7 +8,7 @@ import { StateCreator } from 'zustand';
 export interface ITagSlice {
     allTag: string[],
     setAllTag: (allTag: string[]) => void,
-    addTag: (newData: string) => void,
+    addTag: (newTags: string[]) => void,
     updateTag: (oldData: string, newData: string) => void,
     deleteTag: (tag: string) => void,
 }
@@ -18,11 +18,13 @@ export const createTagSlice: StateCreator<ITagSlice> = (set) => ({
 
     setAllTag: (allTag) => set(() => ({ allTag })),
 
-    addTag: (newData) => set((state) => ({
-        allTag: state.allTag.some(item => item === newData)
-            ? state.allTag
-            : [...state.allTag, newData]
-    })),
+    addTag: (newTags) => set((state) => {
+        const allTagsSet = new Set(state.allTag);
+        newTags.map(item => allTagsSet.add(item));
+        return {
+            allTag: [...allTagsSet]
+        }
+    }),
 
     updateTag: (oldData, newData) => set((state) => ({
         allTag: state.allTag.map(item => {
@@ -32,16 +34,16 @@ export const createTagSlice: StateCreator<ITagSlice> = (set) => ({
     })),
 
     deleteTag: (tag) => set((state) => ({
-        allTag: state.allTag.filter(item => item !== tag)
+        allTag: state.allTag.filter(item => item !== tag),
     })),
 })
 
 export interface IShownTagSlice {
     shownTag: string[],
     setShownTag: (shownTag: string[]) => void,
-    _addShownTag: (newData: string) => void,
-    _deleteShownTag: (tag: string) => void,
-    updateShownTag: (tag: string) => void,
+    addShownTag: (newData: string) => void,
+    deleteShownTag: (tag: string) => void,
+    toggleShownTag: (tag: string) => void,
 }
 
 export const createShownTagSlice: StateCreator<IShownTagSlice> = (set, get) => ({
@@ -49,17 +51,17 @@ export const createShownTagSlice: StateCreator<IShownTagSlice> = (set, get) => (
 
     setShownTag: (shownTag) => set(() => ({ shownTag })),
 
-    _addShownTag: (newData) => set((state) => ({
+    addShownTag: (newData) => set((state) => ({
         shownTag: [...state.shownTag, newData]
     })),
 
-    _deleteShownTag: (tag) => set((state) => ({
+    deleteShownTag: (tag) => set((state) => ({
         shownTag: state.shownTag.filter(item => item !== tag)
     })),
 
-    updateShownTag: (tag) => {
+    toggleShownTag: (tag) => {
         get().shownTag.some(item => item === tag)
-            ? get()._deleteShownTag(tag)
-            : get()._addShownTag(tag)
+            ? get().deleteShownTag(tag)
+            : get().addShownTag(tag)
     },
 })

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Card from './Card'
 import EditingCard from './EditingCard'
-import { ILocalStorageData, ITextData } from '../type/type';
+import { IJsonData, ITextData } from '../type/type';
 import useStore from '../zustand';
 
 interface ICardList {
@@ -9,23 +9,15 @@ interface ICardList {
 }
 
 const CardList = ({ searchKeyword }: ICardList) => {
-    const { allTextCard, setAllTextCard, shownTextCard, shownTag } = useStore((state) => state);
+    const { allTextCard, setAllTextCard, shownTextCard, shownTag, allTag, setAllTag } = useStore((state) => state);
     const [editingId, setEditingId] = useState<string>("");
-    const localStorageData = useRef<ILocalStorageData>();
+    const jsonData = useRef<IJsonData>();
     const shownTextList = shownTextCard(searchKeyword, shownTag);
 
     useEffect(() => {
-        if (!localStorage.getItem("ez-copy")) {
-            localStorage.setItem("ez-copy", JSON.stringify({
-                user: {},
-                posts: [],
-                tags: [],
-                shownTag: []
-            }))
-            return;
-        }
-        const initialData: ILocalStorageData = JSON.parse(localStorage.getItem("ez-copy") || "");
-        localStorageData.current = initialData;
+        if (!localStorage.getItem("ez-copy")) return;
+        const initialData: IJsonData = JSON.parse(localStorage.getItem("ez-copy") || "");
+        jsonData.current = initialData;
         setAllTextCard(initialData.posts || []);
     }, [setAllTextCard]);
 
@@ -34,13 +26,13 @@ const CardList = ({ searchKeyword }: ICardList) => {
         setAllTextCard(newAllTextList);
         // setShownTextList(pre => pre.filter(text => text.id !== id));
 
-        localStorage.setItem("ez-copy", JSON.stringify({ ...localStorageData.current, posts: newAllTextList }));
+        localStorage.setItem("ez-copy", JSON.stringify({ ...jsonData.current, posts: newAllTextList }));
     }
 
     return (
         <div className="flex flex-col gap-2 overflow-y-scroll overflow-x-hidden flex-1 w-full">
             {allTextCard.length === 0 && <p className="text-accent-400">Add your first note</p>}
-            {shownTextList && shownTextList.map(item => {
+            {shownTextList && shownTextList.map((item, i) => {
                 if (editingId === item.id) return (
                     <EditingCard
                         key={item.id}
@@ -57,10 +49,13 @@ const CardList = ({ searchKeyword }: ICardList) => {
                                 if (text.id === data.id) return data;
                                 return text;
                             });
-
                             setAllTextCard(newAllTextList);
 
-                            localStorage.setItem("ez-copy", JSON.stringify({ ...localStorageData.current, posts: newAllTextList }));
+                            const allTagsSet = new Set(allTag);
+                            data.tagList.map(item => allTagsSet.add(item));
+                            setAllTag([...allTagsSet]);
+
+                            localStorage.setItem("ez-copy", JSON.stringify({ ...jsonData.current, posts: newAllTextList, tags: [...allTagsSet] }));
                         }}
                         handleDelete={handleDelete}
                     />
@@ -68,6 +63,7 @@ const CardList = ({ searchKeyword }: ICardList) => {
                 return (
                     <Card
                         key={item.id}
+                        index={i}
                         data={{
                             id: item.id,
                             value: item.value ?? "",
@@ -87,7 +83,22 @@ const CardList = ({ searchKeyword }: ICardList) => {
 
                             setAllTextCard(newAllTextList);
 
-                            localStorage.setItem("ez-copy", JSON.stringify({ ...localStorageData.current, posts: newAllTextList }));
+                            localStorage.setItem("ez-copy", JSON.stringify({ ...jsonData.current, posts: newAllTextList }));
+                        }}
+                        handleMoveCard={(dragIndex: number, hoverIndex: number) => {
+                            const dragPostId = shownTextList[dragIndex].id;
+                            const hoverPostId = shownTextList[hoverIndex].id;
+                            let dragPostIndexInAllPost: number = 0;
+                            let hoverPostIndexInAllPost: number = 0;
+                            for (let i = 0; i < allTextCard.length; i++) {
+                                if (allTextCard[i].id === dragPostId) dragPostIndexInAllPost = i;
+                                if (allTextCard[i].id === hoverPostId) hoverPostIndexInAllPost = i;
+                            }
+
+                            const newAllTextList = [...allTextCard];
+                            [newAllTextList[dragPostIndexInAllPost], newAllTextList[hoverPostIndexInAllPost]] = [newAllTextList[hoverPostIndexInAllPost], newAllTextList[dragPostIndexInAllPost]]
+                            setAllTextCard(newAllTextList);
+                            localStorage.setItem("ez-copy", JSON.stringify({ ...jsonData.current, posts: newAllTextList }));
                         }}
                     />
                 )

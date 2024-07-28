@@ -1,25 +1,35 @@
-import DeleteIcon from "./svg/DeleteIcon";
 import ColorPicker from "./ColorPicker";
 import CardLayout from "./CardLayout";
 import CheckIcon from "./svg/CheckIcon";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useAutosizeTextarea from "../hooks/useAutosizeTextarea";
-import { ITextData } from "../type/type";
+import EraseIcon from "./svg/EraseIcon";
+import { v4 as uuidv4 } from 'uuid';
+import useStore from "../zustand";
+import { IJsonData } from "../type/type";
 import BgButton from "./button/BgButton";
 
 interface ICard {
-    data: ITextData,
-    handleSave: (data: ITextData) => void,
-    handleDelete: (id: string) => void
+    isAddShowing: boolean
 }
 
-const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
-    const { id, value, description, tagList, bgColor } = data;
-    const [inputValue, setInputValue] = useState<string>(value);
-    const [descriptionValue, setDescriptionValue] = useState<string>(description);
+const AddCard = ({ isAddShowing }: ICard) => {
+    const { allTextCard, setAllTextCard, allTag, addTag } = useStore((state) => state);
+    const [inputValue, setInputValue] = useState<string>("");
+    const [descriptionValue, setDescriptionValue] = useState<string>("");
     const [inputTagValue, setInputTagValue] = useState<string>("");
-    const [currentTagList, setCurrentTagList] = useState<Array<string>>(tagList);
+    const [currentTagList, setCurrentTagList] = useState<Array<string>>([]);
     const [duplicatedTag, setDuplicatedTag] = useState<string>("");
+    const [color, setColor] = useState<string>("");
+    const id = "new";
+
+    const jsonData = useRef<IJsonData>();
+
+    useEffect(() => {
+        if (!localStorage.getItem("ez-copy")) return;
+        const initialData: IJsonData = JSON.parse(localStorage.getItem("ez-copy") || "");
+        jsonData.current = initialData;
+    }, []);
 
     const valueRef = useRef<HTMLTextAreaElement>(null);
     const desRef = useRef<HTMLTextAreaElement>(null);
@@ -29,10 +39,11 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
     const isOkDisabled = inputTagValue.length > 0;
 
     return (
-        <>
+        <div className={`w-full pr-[6px] transition duration-150 ease-linear overflow-hidden 
+        ${isAddShowing ? "h-fit mb-2" : "h-0"}`}>
             <CardLayout
-                title="Edit"
                 id={id}
+                title={"Add New"}
                 contentComp={
                     <textarea
                         ref={valueRef}
@@ -64,13 +75,14 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
                         <div className="flex flex-wrap gap-1.5">
                             {currentTagList && currentTagList.map(item =>
                                 <span key={item}
-                                    className={`pl-1.5 py-0.5 rounded-md text-sm text-secondary-900 font-semibold
-                                        ${duplicatedTag === item ? "  bg-red-300" : " bg-accent-400"}
+                                    className={`px-1.5 py-0.5 rounded-md  border text-sm text-secondary-900 font-semibold
+                                        ${duplicatedTag === item ? "border-red-300  bg-accent-300" : "border-accent-400 bg-accent-400"}
                                     `}>
 
                                     {item}
                                     <button
-                                        className={`ml-1.5 pr-1.5 text-center bg-transparent
+                                        className={`ml-1 px-1.5 text-center bg-accent-400 w-4
+                                        ${duplicatedTag === item ? "border-red-300  bg-accent-300" : "border-accent-400 bg-accent-400"}
                                         `}
                                         onClick={() => {
                                             setCurrentTagList(pre => pre.filter(currTag => item !== currTag));
@@ -108,12 +120,25 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
                         padding={`p-1`}
                         color={`bg-primary-950 ${isOkDisabled ? "" : "hover:brightness-125"}`}
                         handleClick={() => {
-                            handleSave({
-                                ...data,
+                            if (!inputValue) return;
+                            const newData = {
+                                id: uuidv4(),
                                 value: inputValue,
                                 tagList: currentTagList,
-                                description: descriptionValue
-                            });
+                                description: descriptionValue,
+                                bgColor: color
+                            };
+                            const newAllTextList = [newData, ...allTextCard];
+                            setAllTextCard(newAllTextList);
+                            addTag(currentTagList);
+
+                            const allTagsSet = new Set(allTag);
+                            currentTagList.map(item => allTagsSet.add(item));
+
+                            localStorage.setItem("ez-copy", JSON.stringify({ ...jsonData.current, posts: newAllTextList, tags: [...allTagsSet] }));
+
+                            setDescriptionValue("");
+                            setInputValue("");
                         }}
                     >
                         <CheckIcon classProps={`${isOkDisabled ? "stroke-primary-600" : "stroke-light-300"}`} />
@@ -123,27 +148,29 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
                         padding={`p-1`}
                         color={`bg-primary-950`}
                         handleClick={() => {
-                            handleDelete(id);
+                            setInputTagValue("");
+                            setDescriptionValue("");
+                            setCurrentTagList([]);
+                            setDuplicatedTag("");
+                            setColor("");
+                            setInputValue("");
                         }}
                     >
-                        <DeleteIcon classProps={"stroke-light-300 group-hover:stroke-warning transition group-hover:duration-150 ease-linear"} />
+                        <EraseIcon classProps={"fill-light-300 group-hover:fill-warning transition group-hover:duration-150 ease-linear"} />
                     </BgButton>
                 </>}
                 colorPickerComp={
-                    <ColorPicker unitId={id} labelFor={`color_${id}`}
-                        handleGetColor={(color: string) => {
-                            handleSave({ ...data, bgColor: color })
-                        }}
-                        color={bgColor}
+                    <ColorPicker unitId={id} labelFor={`color_${id}`} handleGetColor={(color: string) => {
+                        setColor(color);
+                    }}
+                        color={color}
                     />
                 }
-                color={bgColor}
-                handleClick={() => {
-                    navigator.clipboard.writeText(value);
-                }}
+                color={color}
+                handleClick={() => { }}
             />
-        </>
+        </div>
     )
 }
 
-export default EditingCard;
+export default AddCard;

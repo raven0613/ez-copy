@@ -6,9 +6,8 @@ export interface IColorPicker {
 }
 
 export default function ColorPicker({ labelFor, unitId, handleGetColor, color }: IColorPicker) {
-
     return (
-        <div className={`absolute left-full bottom-full pl-1`}>
+        <div className={`absolute left-full bottom-[calc(100%-8px)] pl-1`}>
             {!labelFor && <label htmlFor={`${labelFor ? labelFor : `color_${unitId}`}`}></label>}
             <input
                 className={`opacity-0 pointer-events-none h-0 w-0`}
@@ -16,7 +15,7 @@ export default function ColorPicker({ labelFor, unitId, handleGetColor, color }:
                 onChange={(e) => {
                     handleGetColor(e.target.value);
                 }}
-                value={color}
+                value={color === "" ? "#ffffff" : color}
             ></input>
         </div>
     )

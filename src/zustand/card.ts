@@ -36,7 +36,7 @@ export const createCardSlice: StateCreator<ICardSlice> = (set, get) => ({
 
     setAllTextCard: (allCard) => set(() => ({ allTextCard: allCard })),
 
-    addTextCard: (newData) => set((state) => ({ allTextCard: [...state.allTextCard, newData] })),
+    addTextCard: (newData) => set((state) => ({ allTextCard: [newData, ...state.allTextCard] })),
 
     updateTextCard: (newData) => set((state) => ({
         allTextCard: state.allTextCard.map(item => {
