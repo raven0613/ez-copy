@@ -32,7 +32,7 @@ function App() {
   const { setAllTextCard, setAllTag, setShownTag } = useStore((state) => state);
   const [isAddShowing, setIsAddShowing] = useState(false);
   const [keyword, setKeyword] = useState("");
-  const jsonData = useRef<IJsonData>();
+  const jsonData = useRef<IJsonData | null>(null);
 
   useEffect(() => {
     if (!localStorage.getItem("ez-copy")) return;
@@ -89,11 +89,11 @@ function App() {
       </section>
 
       <section className="w-full h-[32rem] shrink-0 grid grid-cols-5 pb-2">
-        <TagList jsonData={jsonData.current} />
+        <TagList jsonDataRef={jsonData} />
         <div className="h-full w-full flex flex-col overflow-hidden col-span-4">
 
-          <AddCard isAddShowing={isAddShowing} jsonData={jsonData.current} />
-          <CardList searchKeyword={keyword} jsonData={jsonData.current} />
+          <AddCard isAddShowing={isAddShowing} jsonDataRef={jsonData} />
+          <CardList searchKeyword={keyword} jsonDataRef={jsonData} />
 
         </div>
       </section>

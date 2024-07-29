@@ -8,10 +8,10 @@ import CancelAllIcon from "./svg/CancelAllIcon";
 import { saveLocalstorage } from "../App";
 
 interface ITagList {
-    jsonData?: IJsonData;
+    jsonDataRef: React.MutableRefObject<IJsonData | null>;
 }
 
-function TagList({ jsonData }: ITagList) {
+function TagList({ jsonDataRef }: ITagList) {
     const { allTag, setAllTag, shownTag, setShownTag, toggleShownTag: toggleShownTag, deleteShownTag, deleteTag, setAllTextCard, allTextCard } = useStore((state) => state);
 
     const [editingTag, setEditingTag] = useState<string>("");
@@ -33,28 +33,31 @@ function TagList({ jsonData }: ITagList) {
                     ${isSelectAll ? "bg-accent-400" : "bg-accent-400"}
                     `}
                     onClick={() => {
-                        if (!jsonData) return;
+                        if (!jsonDataRef.current) return;
                         setShownTag([...allTag]);
                         setIsSelectAll(true);
-                        const strData = JSON.stringify({
-                            ...jsonData,
+                        const newJsonData = {
+                            ...jsonDataRef.current,
                             shownTag: [...allTag]
-                        })
-                        saveLocalstorage(strData);
+                        }
+                        jsonDataRef.current = newJsonData;
+                        saveLocalstorage(JSON.stringify(newJsonData));
                     }}
                 ><SelectAllIcon classProps="stroke-primary-800" /></button>
                 <button
                     className={`w-7 h-7 p-1 rounded-full hover:bg-warning transition hover:duration-150 hover:ease-linear bg-accent-600 
                     `}
                     onClick={() => {
-                        if (!jsonData) return;
+                        if (!jsonDataRef.current) return;
                         setShownTag([]);
                         setIsSelectAll(false);
-                        const strData = JSON.stringify({
-                            ...jsonData,
+
+                        const newJsonData = {
+                            ...jsonDataRef.current,
                             shownTag: []
-                        })
-                        saveLocalstorage(strData);
+                        }
+                        jsonDataRef.current = newJsonData;
+                        saveLocalstorage(JSON.stringify(newJsonData));
                     }}
                 ><CancelAllIcon classProps="stroke-primary-800" /></button>
             </div>
@@ -66,7 +69,7 @@ function TagList({ jsonData }: ITagList) {
                             key={item}
                             tag={item}
                             handleSave={(newTag: string) => {
-                                if (!jsonData) return;
+                                if (!jsonDataRef.current) return;
                                 const newAllTag = allTag.map(tag => {
                                     if (tag === item) return newTag;
                                     return tag;
@@ -83,8 +86,9 @@ function TagList({ jsonData }: ITagList) {
                                     }
                                 })
                                 setAllTextCard(updatedAllTextCard);
-                                const strData = JSON.stringify({
-                                    ...jsonData,
+
+                                const newJsonData = {
+                                    ...jsonDataRef.current,
                                     posts: updatedAllTextCard,
                                     tags: allTag.map(tag => {
                                         if (tag === item) return newTag;
@@ -94,11 +98,12 @@ function TagList({ jsonData }: ITagList) {
                                         if (tag === item) return newTag;
                                         return tag;
                                     })
-                                })
-                                saveLocalstorage(strData);
+                                }
+                                jsonDataRef.current = newJsonData;
+                                saveLocalstorage(JSON.stringify(newJsonData));
                             }}
                             handleDelete={() => {
-                                if (!jsonData) return;
+                                if (!jsonDataRef.current) return;
                                 setEditingTag("");
                                 deleteTag(item);
                                 deleteShownTag(item);
@@ -110,13 +115,14 @@ function TagList({ jsonData }: ITagList) {
                                 })
                                 setAllTextCard(updatedAllTextCard);
 
-                                const strData = JSON.stringify({
-                                    ...jsonData,
+                                const newJsonData = {
+                                    ...jsonDataRef.current,
                                     posts: updatedAllTextCard,
                                     tags: allTag.filter(tag => tag !== item),
                                     shownTag: shownTag.filter(tag => tag !== item)
-                                })
-                                saveLocalstorage(strData);
+                                }
+                                jsonDataRef.current = newJsonData;
+                                saveLocalstorage(JSON.stringify(newJsonData));
                             }}
                         />
                     )
@@ -129,16 +135,17 @@ function TagList({ jsonData }: ITagList) {
                                 setEditingTag(item);
                             }}
                             handleSelect={() => {
-                                if (!jsonData) return;
+                                if (!jsonDataRef.current) return;
                                 toggleShownTag(item);
 
-                                const strData = JSON.stringify({
-                                    ...jsonData,
+                                const newJsonData = {
+                                    ...jsonDataRef.current,
                                     shownTag: shownTag.some(tag => item === tag)
                                         ? shownTag.filter(tag => item !== tag)
                                         : [...shownTag, item]
-                                })
-                                saveLocalstorage(strData);
+                                }
+                                jsonDataRef.current = newJsonData;
+                                saveLocalstorage(JSON.stringify(newJsonData));
                             }}
                         />
                     )

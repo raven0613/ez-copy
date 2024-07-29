@@ -5,7 +5,8 @@ import CardLayout from "./CardLayout";
 import { ITextData } from "../type/type";
 import BgButton from "./button/BgButton";
 import useDndMove from "../hooks/useDndMove";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import Toast from "./Toast";
 
 
 
@@ -24,7 +25,8 @@ const Card = ({ data, index, handleEdit, handleDelete, handleChangeData, handleM
     const { handlerId, isDragging } = useDndMove({
         targetRef: cardRef, id: data.id, index, handleMoveCard
     });
-
+    const [isCopied, setIsCopied] = useState(false);
+    const timeoutRef = useRef<number | null>(null);
     return (
         <div ref={cardRef} data-handler-id={handlerId} className={`relative z-30 ${isDragging ? "opacity-0" : ""}`} >
             <CardLayout
@@ -67,9 +69,16 @@ const Card = ({ data, index, handleEdit, handleDelete, handleChangeData, handleM
                 }
                 color={bgColor}
                 handleClick={() => {
+                    if (timeoutRef.current) {
+                        timeoutRef.current = null;
+                    }
+
                     navigator.clipboard.writeText(value);
+                    setIsCopied(true);
+                    timeoutRef.current = setTimeout(() => setIsCopied(false), 1000);
                 }}
             />
+            {isCopied && <Toast text={"copied"} position={`top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2`} />}
         </div>
     )
 }

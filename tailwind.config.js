@@ -63,6 +63,18 @@ export default {
           950: "#292929",
         },
       },
+      animation: {
+        // opacity 為 keyframes 裡面定義的名字
+        hide: "opacity 5000ms ease-out",
+        hideFast: "opacity 1000ms ease-out",
+      },
+      keyframes: {
+        opacity: {
+          "0%": { opacity: "1" },
+          "75%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+      },
     },
   },
   plugins: [],

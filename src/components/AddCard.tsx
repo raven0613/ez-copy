@@ -12,10 +12,10 @@ import { saveLocalstorage } from "../App";
 
 interface ICard {
     isAddShowing: boolean,
-    jsonData?: IJsonData;
+    jsonDataRef: React.MutableRefObject<IJsonData | null>;
 }
 
-const AddCard = ({ isAddShowing, jsonData }: ICard) => {
+const AddCard = ({ isAddShowing, jsonDataRef }: ICard) => {
     const { allTextCard, setAllTextCard, allTag, addTag } = useStore((state) => state);
     const [inputValue, setInputValue] = useState<string>("");
     const [descriptionValue, setDescriptionValue] = useState<string>("");
@@ -129,8 +129,13 @@ const AddCard = ({ isAddShowing, jsonData }: ICard) => {
                             const allTagsSet = new Set(allTag);
                             currentTagList.map(item => allTagsSet.add(item));
 
-                            const strData = JSON.stringify({ ...jsonData, posts: newAllTextList, tags: [...allTagsSet] })
-                            saveLocalstorage(strData);
+                            const newJsonData = {
+                                ...jsonDataRef.current,
+                                posts: newAllTextList,
+                                tags: [...allTagsSet]
+                            } as IJsonData;
+                            jsonDataRef.current = newJsonData;
+                            saveLocalstorage(JSON.stringify(newJsonData));
 
                             setDescriptionValue("");
                             setInputValue("");

@@ -7,10 +7,10 @@ import { saveLocalstorage } from '../App';
 
 interface ICardList {
     searchKeyword: string;
-    jsonData?: IJsonData;
+    jsonDataRef: React.MutableRefObject<IJsonData | null>;
 }
 
-const CardList = ({ searchKeyword, jsonData }: ICardList) => {
+const CardList = ({ searchKeyword, jsonDataRef }: ICardList) => {
     const { allTextCard, setAllTextCard, shownTextCard, shownTag, allTag, setAllTag } = useStore((state) => state);
     const [editingId, setEditingId] = useState<string>("");
     const shownTextList = shownTextCard(searchKeyword, shownTag);
@@ -19,8 +19,9 @@ const CardList = ({ searchKeyword, jsonData }: ICardList) => {
         const newAllTextList = allTextCard.filter(text => text.id !== id);
         setAllTextCard(newAllTextList);
 
-        const strData = JSON.stringify({ ...jsonData, posts: newAllTextList });
-        saveLocalstorage(strData);
+        const newJsonData = { ...jsonDataRef.current, posts: newAllTextList } as IJsonData;
+        jsonDataRef.current = newJsonData;
+        saveLocalstorage(JSON.stringify(newJsonData));
     }
 
     return (
@@ -49,8 +50,9 @@ const CardList = ({ searchKeyword, jsonData }: ICardList) => {
                             data.tagList.map(item => allTagsSet.add(item));
                             setAllTag([...allTagsSet]);
 
-                            const strData = JSON.stringify({ ...jsonData, posts: newAllTextList, tags: [...allTagsSet] });
-                            saveLocalstorage(strData);
+                            const newJsonData = { ...jsonDataRef.current, posts: newAllTextList, tags: [...allTagsSet] } as IJsonData;
+                            jsonDataRef.current = newJsonData;
+                            saveLocalstorage(JSON.stringify(newJsonData));
                         }}
                         handleDelete={handleDelete}
                     />
@@ -78,8 +80,9 @@ const CardList = ({ searchKeyword, jsonData }: ICardList) => {
 
                             setAllTextCard(newAllTextList);
 
-                            const strData = JSON.stringify({ ...jsonData, posts: newAllTextList });
-                            saveLocalstorage(strData);
+                            const newJsonData = { ...jsonDataRef.current, posts: newAllTextList } as IJsonData;
+                            jsonDataRef.current = newJsonData;
+                            saveLocalstorage(JSON.stringify(newJsonData));
                         }}
                         handleMoveCard={(dragIndex: number, hoverIndex: number) => {
                             const dragPostId = shownTextList[dragIndex].id;
@@ -95,8 +98,9 @@ const CardList = ({ searchKeyword, jsonData }: ICardList) => {
                             [newAllTextList[dragPostIndexInAllPost], newAllTextList[hoverPostIndexInAllPost]] = [newAllTextList[hoverPostIndexInAllPost], newAllTextList[dragPostIndexInAllPost]]
                             setAllTextCard(newAllTextList);
 
-                            const strData = JSON.stringify({ ...jsonData, posts: newAllTextList });
-                            saveLocalstorage(strData);
+                            const newJsonData = { ...jsonDataRef.current, posts: newAllTextList };
+                            jsonDataRef.current = newJsonData as IJsonData;;
+                            saveLocalstorage(JSON.stringify(newJsonData));
                         }}
                     />
                 )
