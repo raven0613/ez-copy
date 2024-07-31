@@ -67,12 +67,18 @@ export default {
         // opacity 為 keyframes 裡面定義的名字
         hide: "opacity 5000ms ease-out",
         hideFast: "opacity 1000ms ease-out",
+        breathLight: "brightness 1500ms ease-out infinite",
       },
       keyframes: {
         opacity: {
           "0%": { opacity: "1" },
           "75%": { opacity: "1" },
           "100%": { opacity: "0" },
+        },
+        brightness: {
+          "0%": { filter: "brightness(1)" },
+          "50%": { filter: "brightness(1.25)" },
+          "100%": { filter: "brightness(1)" },
         },
       },
     },

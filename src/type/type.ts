@@ -23,7 +23,9 @@ export interface IButton {
     handleClick: () => void,
     children: React.ReactNode,
     size: string,
+    position?: string,
     color: string,
     padding: string,
+    radius?: string,
     disabled?: boolean
 }

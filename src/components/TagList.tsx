@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IJsonData } from "../type/type";
 import Tag from "./Tag";
 import EditingTag from "./EditingTag";
 import useStore from "../zustand";
-import SelectAllIcon from "./svg/SelectAllIcon";
-import CancelAllIcon from "./svg/CancelAllIcon";
+// import SelectAllIcon from "./svg/SelectAllIcon";
+// import CancelAllIcon from "./svg/CancelAllIcon";
 import { saveLocalstorage } from "../App";
 
 interface ITagList {
@@ -12,22 +12,22 @@ interface ITagList {
 }
 
 function TagList({ jsonDataRef }: ITagList) {
-    const { allTag, setAllTag, shownTag, setShownTag, toggleShownTag: toggleShownTag, deleteShownTag, deleteTag, setAllTextCard, allTextCard } = useStore((state) => state);
+    const { allTag, setAllTag, shownTag, toggleShownTag: toggleShownTag, deleteShownTag, deleteTag, setAllTextCard, allTextCard } = useStore((state) => state);
 
     const [editingTag, setEditingTag] = useState<string>("");
-    const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
+    // const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
     const shownTagSet = new Set(shownTag);
 
-    useEffect(() => {
-        if (allTag.length === 0 && shownTag.length === 0) return;
-        if (allTag.length === shownTag.length) setIsSelectAll(true);
-        else setIsSelectAll(false);
-    }, [allTag.length, shownTag.length])
+    // useEffect(() => {
+    //     if (allTag.length === 0 && shownTag.length === 0) return;
+    //     if (allTag.length === shownTag.length) setIsSelectAll(true);
+    //     else setIsSelectAll(false);
+    // }, [allTag.length, shownTag.length])
 
     return (
         <div className="col-span-1 w-full px-2 h-full flex flex-col justify-between">
-            {/* buttons */}
-            <div className={`w-full flex justify-end gap-2`}>
+            {/* buttons 先拿掉 */}
+            {/* {allTag.length > 0 && <div className={`w-full flex justify-end gap-2`}>
                 <button
                     className={`w-7 h-7 p-1 rounded-full hover:brightness-125 transition hover:duration-150 hover:ease-linear 
                     ${isSelectAll ? "bg-accent-400" : "bg-accent-400"}
@@ -60,7 +60,7 @@ function TagList({ jsonDataRef }: ITagList) {
                         saveLocalstorage(JSON.stringify(newJsonData));
                     }}
                 ><CancelAllIcon classProps="stroke-primary-800" /></button>
-            </div>
+            </div>} */}
             {/* tags */}
             <div className={`w-full max-h-[29.25rem] flex-1 flex flex-col overflow-y-scroll overflow-x-hidden`}>
                 {allTag.map((item) => {

@@ -71,7 +71,7 @@ function App() {
       <section className="w-full h-[4rem] grid grid-cols-4 items-center px-5">
         <img src={logo} className="h-[1.75rem] col-span-1" />
         <div className="col-start-4 flex w-full items-center justify-between">
-          <SearchInput handleSetKeyword={(keyword) => {
+          <SearchInput handleSetKeyword={(keyword: string) => {
             setKeyword(keyword);
           }} />
           <BgButton
@@ -90,7 +90,7 @@ function App() {
 
       <section className="w-full h-[32rem] shrink-0 grid grid-cols-5 pb-2">
         <TagList jsonDataRef={jsonData} />
-        <div className="h-full w-full flex flex-col overflow-hidden col-span-4">
+        <div className="h-full w-full flex flex-col overflow-hidden col-span-4 relative">
 
           <AddCard isAddShowing={isAddShowing} jsonDataRef={jsonData} />
           <CardList searchKeyword={keyword} jsonDataRef={jsonData} />

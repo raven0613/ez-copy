@@ -9,7 +9,7 @@ interface ITag {
 
 const Tag = ({ tag, handleEdit, handleSelect, isSelected }: ITag) => {
     return (
-        <div key={tag} className={`w-full text-base text-start px-2 py-1.5  hover:duration-150 cursor-pointer relative group hover:brightness-125
+        <div key={tag} className={`w-full text-base text-start pl-2 pr-6 py-1.5  hover:duration-150 cursor-pointer relative group hover:brightness-125
             ${isSelected
                 ? "bg-accent-400 odd:bg-accent-500 text-primary-950 hover:odd:brightness-110"
                 : "odd:bg-secondary-900 bg-primary-950 text-light-300"}
@@ -18,7 +18,7 @@ const Tag = ({ tag, handleEdit, handleSelect, isSelected }: ITag) => {
                 handleSelect();
             }}
         >
-            {tag}
+            <p className="w-full truncate">{tag}</p>
 
             <div className="absolute right-1 top-0 bottom-0 items-center group-hover:flex hidden">
                 <button

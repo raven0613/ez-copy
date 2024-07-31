@@ -28,7 +28,7 @@ const Card = ({ data, index, handleEdit, handleDelete, handleChangeData, handleM
     const [isCopied, setIsCopied] = useState(false);
     const timeoutRef = useRef<number | null>(null);
     return (
-        <div ref={cardRef} data-handler-id={handlerId} className={`relative z-30 ${isDragging ? "opacity-0" : ""}`} >
+        <div ref={cardRef} data-handler-id={handlerId} className={`w-full relative z-30 ${isDragging ? "opacity-0" : ""}`} >
             <CardLayout
                 id={id}
                 contentComp={value}
@@ -42,12 +42,12 @@ const Card = ({ data, index, handleEdit, handleDelete, handleChangeData, handleM
                     <BgButton
                         size={`w-7 h-7`}
                         padding={`p-1`}
-                        color={`bg-primary-950 hover:brightness-125`}
+                        color={`bg-primary-950`}
                         handleClick={() => {
                             handleEdit(id);
                         }}
                     >
-                        <EditIcon classProps={"stroke-light-300"} />
+                        <EditIcon classProps={"stroke-light-300 group-hover:stroke-accent-400 transition group-hover:duration-150 ease-linear"} />
                     </BgButton>
                     <BgButton
                         size={`w-7 h-7`}

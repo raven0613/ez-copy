@@ -1,9 +1,9 @@
 import { IButton } from '../../type/type';
 
-const OutlineButton = ({ handleClick, children, size, color, padding }: IButton) => {
+const OutlineButton = ({ handleClick, children, size, position, color, padding, radius }: IButton) => {
     return (
         <button
-            className={`${size} ${padding} group ${color} border transition ease-linear  hover:duration-150`}
+            className={`${size} ${position} ${padding} group ${color} ${radius ?? "rounded-full"} border transition ease-linear hover:duration-150`}
             onClick={e => {
                 e.stopPropagation();
                 handleClick();

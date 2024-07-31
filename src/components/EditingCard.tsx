@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import useAutosizeTextarea from "../hooks/useAutosizeTextarea";
 import { ITextData } from "../type/type";
 import BgButton from "./button/BgButton";
+import OutlineButton from "./button/OutlineButton";
 
 interface ICard {
     data: ITextData,
@@ -79,26 +80,43 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
                                 </span>
                             )}
                         </div>
-                        <input
-                            placeholder="Input tag and press Enter"
-                            onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
-                            onClick={e => e.stopPropagation()}
-                            className={`px-1.5 py-1 text-sm bg-secondary-900 w-full h-8 text-light-300 placeholder:brightness-75`}
-                            value={inputTagValue}
-                            onChange={e => {
-                                setInputTagValue(e.target.value);
-                                setDuplicatedTag("");
-                            }}
-                            onKeyDown={(e) => {
-                                if (e.key !== "Enter" || !inputTagValue.trim()) return;
-                                if (currentTagList.some(item => item === inputTagValue)) {
-                                    setDuplicatedTag(inputTagValue);
-                                    return;
-                                }
-                                setCurrentTagList(pre => [...pre, inputTagValue]);
-                                setInputTagValue("");
-                            }}
-                        />
+                        <div className="w-full relative">
+                            <input
+                                placeholder="Input tag and press Enter"
+                                onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
+                                onClick={e => e.stopPropagation()}
+                                className={`px-1.5 py-1 text-sm bg-secondary-900 w-full h-8 text-light-300 placeholder:brightness-75`}
+                                value={inputTagValue}
+                                onChange={e => {
+                                    setInputTagValue(e.target.value);
+                                    setDuplicatedTag("");
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key !== "Enter" || !inputTagValue.trim()) return;
+                                    if (currentTagList.some(item => item === inputTagValue)) {
+                                        setDuplicatedTag(inputTagValue);
+                                        return;
+                                    }
+                                    setCurrentTagList(pre => [...pre, inputTagValue]);
+                                    setInputTagValue("");
+                                }}
+                            />
+                            {inputTagValue && <OutlineButton
+                                size={`text-sm`}
+                                position={`right-1 top-1/2 -translate-y-1/2 absolute`}
+                                padding={`px-1 py-[1px]`}
+                                radius={`rounded-sm`}
+                                color={`text-accent-300 border-accent-300 hover:brightness-125 bg-primary-900 animate-breathLight brightness-100`}
+                                handleClick={() => {
+                                    if (currentTagList.some(item => item === inputTagValue)) {
+                                        setDuplicatedTag(inputTagValue);
+                                        return;
+                                    }
+                                    setCurrentTagList(pre => [...pre, inputTagValue]);
+                                    setInputTagValue("");
+                                }}
+                            >Enter</OutlineButton>}
+                        </div>
                     </div>
                 }
                 buttonComp={<>
@@ -106,7 +124,7 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
                         disabled={isOkDisabled}
                         size={`w-7 h-7`}
                         padding={`p-1`}
-                        color={`bg-primary-950 ${isOkDisabled ? "" : "hover:brightness-125"}`}
+                        color={`bg-primary-950`}
                         handleClick={() => {
                             handleSave({
                                 ...data,
@@ -116,7 +134,7 @@ const EditingCard = ({ data, handleSave, handleDelete }: ICard) => {
                             });
                         }}
                     >
-                        <CheckIcon classProps={`${isOkDisabled ? "stroke-primary-600" : "stroke-light-300"}`} />
+                        <CheckIcon classProps={`${isOkDisabled ? "stroke-primary-600" : "stroke-light-300 group-hover:stroke-accent-400 transition group-hover:duration-150 ease-linear"}`} />
                     </BgButton>
                     <BgButton
                         size={`w-7 h-7`}
